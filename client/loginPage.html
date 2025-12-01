@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web App</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Login</title>
     <style>
         * {
             padding: 0;
@@ -43,26 +42,6 @@
             width: 100%;
         }
 
-        .background {
-            font-family: Verdana, Geneva, Tahoma, sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-
-            align-items: center;
-            color: #ffffff;
-            height: 100vh;
-            width: 100%;
-            background-color: #015CE9;
-            /* font-weight: 100; */
-            /* font-size: 20px; */
-            padding: 24px;
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center center;
-            margin: 0 auto;
-        }
-
         h1,
         h2 {
             font-size: 1.2rem;
@@ -72,22 +51,10 @@
             text-align: center;
         }
 
-        /* Top Section */
-        .header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 20px;
-        }
-
         .logo {
             width: 100px;
             height: 100%;
-        }
-
-        .datetime {
-            font-size: 12px;
+            margin: 0 auto 20px;
         }
 
         /* Main Content */
@@ -97,9 +64,6 @@
             justify-content: center;
             width: 100%;
             align-items: center;
-            /* flex-grow: 1; */
-            /* gap: 50px; */
-            /* margin: 0 auto; */
         }
 
         @media screen and (min-width: 468px) {
@@ -108,25 +72,27 @@
             }
         }
 
+        /* -------- LOGIN FORM -------- */
+
         .login-form {
             display: flex;
             flex-direction: column;
             padding: 20px;
-            /* border: 1px solid #ccc; */
             border-radius: 5px;
             max-width: 333px;
             justify-content: var();
             align-content: left;
             text-align: center;
+            color: #ffffff;
+            font-weight: bolder;
         }
+
+
 
         .login-form input {
             margin-bottom: 10px;
             color: #1e1e1e;
-            /* border-radius: 14px; */
             height: 50px;
-            /* padding: 0 16px; */
-            width: 100%;
         }
 
         .yellow-accent {
@@ -152,46 +118,6 @@
             align-self: center;
         }
 
-
-
-        /* Footer Section */
-        .footer {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            /* padding: 15px; */
-        }
-
-        .soc-icons {
-            display: flex;
-            justify-content: center;
-            /* Center all boxes horizontally */
-            gap: 12px;
-        }
-
-        .soc-box {
-            width: 50px;
-            height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #fcfafa26;
-            border-radius: 8px;
-        }
-
-        .footer svg {
-            width: 40px;
-            height: 40px;
-            /* align-content: end; */
-        }
-
-        .footer a {
-            margin: 0 10px;
-            /* font-size: 24px; */
-            text-decoration: none;
-            /* color: black; */
-        }
-
         .login-container,
         .welcome-container {
             display: flex;
@@ -206,29 +132,107 @@
             margin: 10px;
             border-radius: 5px;
             border: none;
-            width: 200px;
+        }
+
+        /* -------- AVATAR SELECTION -------- */
+        .hospital-buddy-selection {
+            margin: 15px 0;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar.selected {
+            border: 3px solid #FFFF6E;
+            transform: scale(1.08);
         }
     </style>
+
     <script>
+        /* -------- PREDEFINED USERS -------- */
+        const users = [
+            { username: "Nata", password: "Nata" },
+            { username: "Adam", password: "Adam" },
+            { username: "Mia", password: "Mia" },
+            { username: "Leo", password: "Leo" },
+            { username: "Sara", password: "Sara" },
+            { username: "Ben", password: "Ben" }
+        ];
+
+        /* -------- LOGIN FUNCTION -------- */
         function loginUser() {
-            const userName = document.getElementById("username").value.trim();
+            const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value.trim();
+            const selectedAvatar = localStorage.getItem("selectedAvatar");
 
-            // Check if username and password are correct
-            if (userName === "Nata" && password === "Nata") {
-                window.location.href = `welcome_page.html?name=${encodeURIComponent(userName)}`; // Passes name in URL
-            } else {
-                alert("Incorrect username or password. Try again!");
+            const userExists = users.find(
+                (u) => u.username === username && u.password === password
+            );
+
+            if (!userExists) {
+                alert("Incorrect username or password!");
+                return;
             }
+
+            if (!selectedAvatar) {
+                alert("Please choose your hospital buddy!");
+                return;
+            }
+
+            localStorage.setItem("loggedUser", username);
+
+            window.location.href = `welcome_page.html`;
         }
 
-        function updateDateTime() {
-            const now = new Date();
-            document.getElementById("datetime").textContent = now.toLocaleString();
-        }
+        /* -------- CREATE AVATAR OPTIONS -------- */
+        document.addEventListener("DOMContentLoaded", () => {
+            const avatarContainer = document.querySelector(".hospital-buddy-selection");
 
-        setInterval(updateDateTime, 1000);
-        window.onload = updateDateTime;
+            const avatarImages = [
+                "avatar-bunny.png",
+                "avatar-dog.png",
+                "avatar-owl.png",
+                "avatar-fox.png",
+                "avatar-panda.png",
+                "avatar-bear.png",
+                "avatar-lion.png",
+                "avatar-tiger.png"
+            ];
+
+            avatarImages.forEach((src) => {
+                const div = document.createElement("div");
+                div.classList.add("avatar");
+
+                const img = document.createElement("img");
+                img.src = "./src/assets/avatars/" + src;
+
+                div.appendChild(img);
+                avatarContainer.appendChild(div);
+
+                div.addEventListener("click", () => {
+                    document.querySelectorAll(".avatar").forEach(a => a.classList.remove("selected"));
+                    div.classList.add("selected");
+
+                    localStorage.setItem("selectedAvatar", src);
+                });
+            });
+        });
     </script>
 </head>
 
